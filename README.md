@@ -17,7 +17,7 @@
 ## 用法
 
 ```bash
-python3 src/analyzer.py data/flight_log.csv
+python3 analyzer.py data/flight_log.csv
 ```
 
 输出：

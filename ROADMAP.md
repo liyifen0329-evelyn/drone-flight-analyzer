@@ -36,7 +36,7 @@ AI 可以给思路、可以解释、可以帮你 debug，
 ### v0.1 · 能读文件
 - 目标：读 `data/flight_log.csv`，一行行打印出来，最后打印总行数
 - 用到的：lesson8 的 `open` / `readlines` / `strip` / `len`
-- 文件：`src/analyzer.py`
+- 文件：`analyzer.py`（项目根目录，单文件工具，不建 src/）
 - 验收：终端打印出 11 行（1 行表头 + 10 行数据），最后一行是「一共 10 条记录」
 
 ### v0.2 · 能解析
@@ -51,7 +51,7 @@ AI 可以给思路、可以解释、可以帮你 debug，
 - 验收：手算一遍对照——最高 140，超限 3 次（125 / 140 / 132）
 
 ### v0.4 · 用 pandas 重写一遍
-- 目标：**新建一个文件** `src/analyzer_pandas.py`，用 pandas 做同样的事
+- 目标：**新建一个文件** `analyzer_pandas.py`，用 pandas 做同样的事
 - 用到的：lesson12
 - 验收：两个文件跑出来的数字一模一样
 - ★ 这一步是项目的**加分点**：README 里写清楚「我手写了 20 行，pandas 一行干完，我把两个版本都留在仓库里」
@@ -63,7 +63,7 @@ AI 可以给思路、可以解释、可以帮你 debug，
 - 验收：跑完目录里出现 report.md，打开看格式对不对
 
 ### v0.6 · 能换数据
-- 目标：`python3 src/analyzer.py 任意文件名.csv` 都能跑，不用改代码
+- 目标：`python3 analyzer.py 任意文件名.csv` 都能跑，不用改代码
 - 新知识：命令行参数（`sys.argv` 就够了，别上 argparse）
 - 验收：换一个 CSV 也能出报告
 
