@@ -4,6 +4,9 @@ with open("data/flight_log.csv",encoding="utf-8")as f:
 keys = lines[0].strip().split(",")
 
 rows = []
+max_altitude = 0
+over_count = 0
+
 for line in lines[1:]:
     value = line.strip().split(",")
     
@@ -14,5 +17,12 @@ for line in lines[1:]:
         keys[3]:value[3],
     }
     rows.append(row)
+
+    altitude = int(value[1])
+    if altitude > max_altitude:
+        max_altitude = altitude
+    if altitude > 120:
+        over_count += 1
 print("一共:", len(rows),"条记录")
-print(rows[0])
+print("最高高度：", max_altitude, "米")
+print("超限次数：", over_count, "次")
