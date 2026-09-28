@@ -26,3 +26,18 @@ for line in lines[1:]:
 print("一共:", len(rows),"条记录")
 print("最高高度：", max_altitude, "米")
 print("超限次数：", over_count, "次")
+
+report = f"""# 无人机飞行安全报告
+
+- 分析记录数：{len(rows)} 条
+- 最高飞行高度： {max_altitude} 米
+- 高度超限次数 (>120米): {over_count}次
+结论：本次飞行共 {over_count} 次超过 120 米安全高度限制，建议复查航线规划。
+"""
+print(report)
+
+with open("report.md","w",encoding="utf-8") as f:
+    f.write(report)
+
+print("报告已生成: report.md")
+
