@@ -1,7 +1,29 @@
-with open("data/flight_log.csv",encoding="utf-8")as f:
-    lines = f.readlines()
+import sys
+
+if len(sys.argv) < 2:
+    print("用法: python3 analyzer.py 日志文件.csv")
+    sys.exit(1)
+
+filename = sys.argv[1]
+
+try:
+    with open(filename, encoding="utf-8") as f:
+        lines = f.readlines()
+except FileNotFoundError:
+    print("找不到这个文件:", filename)
+    sys.exit(1)
+
+print("正在分析:", filename)
+
+if len(lines) < 2:
+    print("这个文件是空的,或者只有表头,没有可分析的数据")
+    sys.exit(1)
 
 keys = lines[0].strip().split(",")
+
+if len(keys) != 4:
+    print("表头应该有 4 列 (time, altitude, speed, battery),实际是:", keys)
+    sys.exit(1)
 
 rows = []
 max_altitude = 0
@@ -27,7 +49,7 @@ print("一共:", len(rows),"条记录")
 print("最高高度：", max_altitude, "米")
 print("超限次数：", over_count, "次")
 
-report = f"""# 无人机飞行安全报告
+report = f"""# 无人机飞行安全报告 · {filename}
 
 - 分析记录数：{len(rows)} 条
 - 最高飞行高度： {max_altitude} 米
