@@ -1,55 +1,77 @@
 # Drone Flight Analyzer
 
-一个命令行小工具：丢进去一份无人机飞行日志（CSV），它吐出一份**飞行安全报告**。
+A small command-line tool: give it a drone flight log (CSV), it returns a flight safety report.
 
-## 它解决什么问题
+## What it solves
 
-无人机飞完一趟，日志里躺着几百行 `time, altitude, speed, battery`。
-人看不出来问题，但程序一眼能数出来：
+After a flight, the log holds rows of `time, altitude, speed, battery`. Read by eye, that will not reliably
+tell you:
 
-- 这次飞行**超了几次限高**（默认 120 米）
-- 最高飞到多少米、平均多少米
-- 电量什么时候掉到警戒线以下
-- 全程耗时、平均速度
+- how many times the flight breached the altitude limit (default 120 m)
+- peak and mean altitude
+- when battery dropped below a safe threshold
+- flight duration and mean speed
 
-输出是一份 Markdown 报告，直接能贴进飞后复盘文档。
+Output is a Markdown report (`report.md`) that drops straight into a post-flight review document.
 
-## 用法
+## How to run
 
 ```bash
-python3 analyzer.py data/flight_log.csv
+python3 analyzer.py
 ```
 
-输出：
+Reads `data/flight_log.csv` and writes `report.md`.
+
+> **Known issue (#1):** the input path is hard-coded, so a filename passed on the command line is ignored.
+> Found by testing the tool with input that should break it. See [issue #1](https://github.com/liyifen0329-evelyn/drone-flight-analyzer/issues/1).
+
+## Example output
+
+Terminal:
 
 ```
-========================================
- 飞行安全报告 · flight_log.csv
-========================================
- 记录条数      10 条
- 飞行时段      09:00:00 → 09:01:30
- 最高高度      140 米   ⚠️ 超限
- 平均高度      107.5 米
- 超限次数      3 次    (09:00:30, 09:00:40, 09:00:50)
- 最低电量      80 %    ✅ 正常
- 平均速度      8.5 m/s
-----------------------------------------
- 结论: 需要复核。本次飞行有 3 次超过 120 米限高。
-========================================
+一共: 10 条记录
+最高高度： 140 米
+超限次数： 3 次
+报告已生成: report.md
 ```
 
-## 我自己学到的（待补）
+`report.md`:
 
-> 这一节你写。PM 面试官最爱问「你做这个的时候踩了什么坑」。
-> 写 3 条就够，比如：
-> - 手写 20 行解析 CSV，后来发现 pandas 一行就完事
-> - 第一版没有处理空文件，一跑就崩
-> - 一开始 report 是直接 print 的，后来才改成能存成文件
+```markdown
+# 无人机飞行安全报告
 
-## 技术栈
+- 分析记录数：10 条
+- 最高飞行高度： 140 米
+- 高度超限次数 (>120米): 3次
+结论：本次飞行共 3 次超过 120 米安全高度限制，建议复查航线规划。
+```
 
-Python 3 · pandas · 零依赖可运行（pandas 只用在其中一个版本）
+## Two implementations, one answer
 
-## 状态
+`analyzer.py` parses the CSV with a plain Python loop. `analyzer_pandas.py` does the same job with pandas.
+Both are kept on purpose: when two independent implementations land on the same figures, I treat the number
+as sound. On the sample log both report peak altitude 140 m and 3 breaches.
 
-施工中。进度见 `ROADMAP.md`。
+## How I checked it
+
+- **Hand-count first.** Before running anything, I worked out the expected answers by hand on the 10-row
+  sample — peak 140 m, three breaches at 125 / 140 / 132 m — then compared them with the program output.
+- **Build it twice.** The plain-Python and pandas versions were cross-checked against each other.
+- **Break it on purpose.** I ran an empty file and a file missing the `battery` column. Both returned a
+  complete, plausible-looking report instead of failing, because the script reads a fixed path and ignores
+  the filename supplied. No crash and no warning — a silent success on the wrong input. Logged as issue #1.
+- **Commit only what runs.** Five commits, each independently working.
+
+The lesson I took from it: a tool that fails loudly is easy to catch. A tool that succeeds quietly on the
+wrong input is the one that gets you.
+
+## Built with AI, reviewed by me
+
+I used an AI coding agent (Claude Code) as a reviewer rather than a ghostwriter — I type every line myself;
+the agent explains, reviews and debugs. `AI协作规则.md` records the rules I set before starting, and
+`ROADMAP.md` holds the step-by-step plan behind the commit history.
+
+## Tech
+
+Python 3 · pandas (in one of the two versions) · Git
